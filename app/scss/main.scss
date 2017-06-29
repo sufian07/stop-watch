@@ -1,7 +1,84 @@
 $primary-color: #333333;
+@font-face {
+    font-family: 'Digital7';
+    src: url('../fonts/digital-7.ttf'); /* IE9 Compat Modes */
+    src: 
+        local('Digital7'),
+        url('../fonts/digital-7.ttf') 
+        format('truetype');
+}
 body {
     background-color: $primary-color;
 }
-
-// inject:app
-// endinject
+#content{
+    padding-top: 10px;
+}
+.well{
+    position: relative;
+    text-align: center;
+    color: #76C32E;
+    font-size: 38px;
+    border: 1px solid black;
+    background-color: #242424;
+    margin-bottom:0;
+    border-bottom-left-radius: 0px;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 0px;
+    border-top-right-radius: 10px;
+}
+.time-white{
+    color:white;
+    border-bottom:1px solid #5E5E5E;
+    float: left;
+    width:100%;
+    padding:  10px 0;
+    &:last-child{
+        border-bottom: none;
+    }
+    > div{
+        padding: 0;
+    }
+    .clock-font {
+        font-size: 20px;
+        text-align: left;
+        &.cloned {
+            opacity: 0.1;
+        }
+        span{
+            min-width: 10px;
+        }
+    }
+    &:hover .remove{
+        display: block;
+    }
+    .remove{
+        color:white;
+        background-color:red;
+        padding: 5px;
+        border: none;
+        font-size: 11px;
+        float: right;
+        display: none;
+    }
+}
+.clock {
+    position: relative;
+}
+.clock-font{
+    font-family: 'Digital7';
+    &.cloned {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0.3;
+        width: 100%;
+    }
+    span {
+        min-width: 20px;
+        text-align: right;
+        display: inline-block;
+    }
+    .colon{
+        text-align: center;
+    }
+}

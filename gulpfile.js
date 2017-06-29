@@ -8,7 +8,7 @@ var size = require('gulp-size');
 var stripDebug = require('gulp-strip-debug'); // Remove debugging stuffs  
 var uglify = require('gulp-uglify'); // Minify JavaScript  
 var imagemin = require('gulp-imagemin'); // Minify images  
-var minifyHTML = require('gulp-minify-html'); // Minify HTML  
+var htmlmin = require('gulp-htmlmin');
 var inject = require('gulp-inject');
 var wiredep = require('wiredep').stream;
 
@@ -36,8 +36,8 @@ gulp.task('vendors-css', function() {
 gulp.task('app-js', function() {
     gulp.src(['./app/js/*.js'])
         .pipe(concat('app.js'))
-        .pipe(stripDebug())
-        .pipe(uglify())
+        // .pipe(stripDebug())
+        // .pipe(uglify())
         .pipe(gulp.dest('./dist/js/'));
 });
 gulp.task('vendors-js', function() {
@@ -51,22 +51,18 @@ gulp.task('vendors-js', function() {
         .pipe(uglify())
         .pipe(gulp.dest('./dist/js/'));
 });
+gulp.task('fonts', function() {
+    gulp.src([
+            './node_modules/font-awesome/fonts/fontawesome-webfont.*',
+            './app/fonts/*.*'
+        ])
+        .pipe(gulp.dest('./dist/fonts/'));
+});
 
-var injectOptions = {
-    addRootSlash: false,
-    ignorePath: ['app', 'dist']
-};
 
-gulp.task('html', ['vendors-css', 'app-css', 'vendors-js', 'app-js'], function() {
-    var injectFiles = gulp.src([
-        'dist/css/app.css',
-        'dist/css/vendors.css',
-        'dist/js/app.js',
-        'dist/js/vendors.js'
-    ]);
+gulp.task('html', ['app-css', 'app-js'], function() {
     return gulp.src('app/index.html')
-        .pipe(inject(injectFiles, injectOptions))
-        .pipe(minifyHTML())
+        .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(gulp.dest('dist'))
 });
 
@@ -85,7 +81,10 @@ gulp.task('size', function() {
         }));
 });
 
-gulp.task('serve', ['clean', 'html', 'images', 'size'], function() {
+gulp.task('vendor', ['fonts', 'vendors-css', 'vendors-js']);
+gulp.task('build', ['clean', 'vendor', 'html']);
+
+gulp.task('serve', ['build'], function() {
     browserSync.init({
         server: {
             baseDir: 'dist',
@@ -93,8 +92,10 @@ gulp.task('serve', ['clean', 'html', 'images', 'size'], function() {
     });
 });
 
+gulp.task('reload', ['html'], function() {
+    browserSync.reload();
+});
+
 gulp.task('default', ['serve'], function() {
-    gulp.watch('app/scss/**/*.scss', ['saas']);
-    gulp.watch('app/*.html', browserSync.reload);
-    gulp.watch('app/js/**/*.js', browserSync.reload);
+    gulp.watch(['app/scss/**/*.scss', 'app/*.html', 'app/js/**/*.js'], ['reload']);
 });
