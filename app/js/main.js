@@ -1,150 +1,113 @@
-angular.module('stopWatchApp', [])
+angular.module('stopWatchApp', ['ngStorage'])
     .filter('counterValue', counterValueFilter)
-    .factory('storage', ['$window', storageFactory])
-    .controller("AppController", ['$scope', '$rootScope', 'storage', '$timeout', AppController])
-    .directive('clock',clockDirective);
+    .controller("AppController", ['$scope', '$rootScope', '$localStorage', '$timeout', AppController])
+    .directive('clock', clockDirective);
 
-function counterValueFilter(){
-   return function(value){
-      if(isNaN(value)) return value;
-      if(value >= 0 && value < 10) return "0"+parseInt(value);
-      return ""+parseInt(value);
-   }
+function counterValueFilter() {
+    return function(value) {
+        if (isNaN(value)) return value;
+        if (value >= 0 && value < 10) return "0" + parseInt(value);
+        return "" + parseInt(value);
+    }
 }
 
-function storageFactory($window) {
-    return{
-        set: function(key,data){
-            $window.localStorage.setItem(key, JSON.stringify(data));
-        },
-        get: function(key){
-           return JSON.parse(localStorage.getItem(key));
-        }
-    };
-}
+function AppController($scope, $rootScope, $localStorage, $timeout) {
 
-function AppController($scope, $rootScope, storage, $timeout) {
-
+    $scope.$storage = $localStorage;
     $scope.init = function() {
-        $scope.play = false;
-        $scope.time = {
+        $scope.$storage.play = false;
+        $scope.$storage.time = {
             number: 0,
             m: 0,
             s: 0,
             c: 0
         };
-        $scope.times = [];
-        updateLocalStorage();
+        $scope.$storage.times = [];
     };
-    
+
     $scope.tooglePlay = function() {
-        getFromLocalStorage();
-        $scope.play =  !$scope.play;
-        updateLocalStorage();
-        runTimer();
+        $scope.$storage.play = !$scope.$storage.play;
+         runTimer();
     };
 
-    $scope.addTime = function(){
-        getFromLocalStorage();
-        $scope.times.push(angular.copy($scope.time));
-        updateLocalStorage();
+    $scope.addTime = function() {
+        $scope.$storage.times.push(angular.copy($scope.$storage.time));
     };
 
-    $scope.removeTime = function(t){
-        getFromLocalStorage();
-        $scope.times = $scope.times.filter(function(time){
+    $scope.removeTime = function(t) {
+        $scope.$storage.times = $scope.$storage.times.filter(function(time) {
             return time.number !== t.number
         });
-        updateLocalStorage();
     };
 
     var LOCAL_DATA = {
-        PLAY:  'play',
-        TIME:  'time',
-        TIMES:  'times',
+        PLAY: 'play',
+        TIME: 'time',
+        TIMES: 'times',
     }
 
-    var temp = storage.get(LOCAL_DATA.TIME);
 
-    if(temp && temp.number > 0){
-        getFromLocalStorage();
-        if($scope.play){
-            $scope.play =  !$scope.play;
-            updateLocalStorage();
+    if ($scope.$storage.time && $scope.$storage.time.number > 0) {
+        if ($scope.$storage.play) {
+            $scope.$storage.play = !$scope.$storage.play;
             $scope.tooglePlay();
         }
-    }else{
+    } else {
         $scope.init();
     }
 
-    function runTimer(){
-        if($scope.play){
-            getFromLocalStorage();
-            $scope.time.number++;
+    function runTimer() {
+        if ($scope.$storage.play) {
+            $scope.$storage.time.number++;
             calculateTime();
             $timeout(runTimer, 10);
         }
     }
 
     function calculateTime() {
-        $scope.time.m = Math.floor($scope.time.number / 6000);
-        $scope.time.s = Math.floor(($scope.time.number - ($scope.time.m * 6000)) / 100);
-        $scope.time.c = $scope.time.number - (($scope.time.m * 6000) + ($scope.time.s * 100));
-        updateLocalStorage();
-        //console.log($scope.time.m, $scope.time.s, $scope.time.c);
+        $scope.$storage.time.m = Math.floor($scope.$storage.time.number / 6000);
+        $scope.$storage.time.s = Math.floor(($scope.$storage.time.number - ($scope.$storage.time.m * 6000)) / 100);
+        $scope.$storage.time.c = $scope.$storage.time.number - (($scope.$storage.time.m * 6000) + ($scope.$storage.time.s * 100));
     }
 
-    function updateLocalStorage(){
-        Object.values(LOCAL_DATA).map(function(key){
-            storage.set(key,$scope[key]);
-        });
-    }
-
-    function getFromLocalStorage(){
-        Object.values(LOCAL_DATA).map(function(key){
-            $scope[key]=storage.get(key)
-        });
-    }
 }
 
-function clockDirective(){
-    var template = '<div class="clock"><span class="clock-font" ng-bind-html="html"></span>'
-                    +'<span class="clock-font cloned"><span>0</span><span>0</span><span class="colon"> : </span><span>0</span><span>0</span><span class="colon"> : </span><span>0</span><span>0</span></span></div>'
+function clockDirective() {
+    var template = '<div class="clock"><span class="clock-font" ng-bind-html="html"></span>' +
+        '<span class="clock-font cloned"><span>0</span><span>0</span><span class="colon"> : </span><span>0</span><span>0</span><span class="colon"> : </span><span>0</span><span>0</span></span></div>'
     return {
         restrict: 'E',
         replace: true,
         transclude: false,
         template: template,
-        scope:{
-            minute: "=", 
-            second: "=", 
+        scope: {
+            minute: "=",
+            second: "=",
             centi: "="
         },
-        controller:['$scope','$filter','$sce',function($scope,$filter,$sce){
+        controller: ['$scope', '$filter', '$sce', function($scope, $filter, $sce) {
             makeHtml();
-            $scope.$watch("centi",function(){
+            $scope.$watch("centi", function() {
                 makeHtml();
                 console.log($scope["centi"]);
             });
-            function makeHtml(){
-                var keys = ['minute','second','centi'];
+
+            function makeHtml() {
+                var keys = ['minute', 'second', 'centi'];
                 var tempHtml = '';
 
-                keys.map(function(key,index,array){
+                keys.map(function(key, index, array) {
                     $scope[key] = $scope[key] || 0;
                     $scope[key] = $filter('counterValue')($scope[key]);
                     for (letter of $scope[key]) {
-                        tempHtml += '<span>'+letter+'</span>';
+                        tempHtml += '<span>' + letter + '</span>';
                     }
-                    if(index<array.length-1){
+                    if (index < array.length - 1) {
                         tempHtml += '<span class="colon"> : </span>';
                     }
                 });
                 $scope.html = $sce.trustAsHtml(tempHtml);
             }
-        }],
-        link: ['$scope', '$element', 'attr',function($scope, $element, attr){
-
         }]
     };
 }
