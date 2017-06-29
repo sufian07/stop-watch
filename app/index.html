@@ -29,10 +29,10 @@
                     </div>
                 </div>
                 <div class="time-white" ng-if="$storage.times.length>0" ng-repeat="t in $storage.times track by $index">
-                    <div class="col-md-8 clock-font">
+                    <div class="col-xs-8 clock-font">
                         <clock minute="t.m" second="t.s" centi="t.c"></clock>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-xs-4">
                         <button ng-click="removeTime(t)" class="remove">REMOVE</button>
                     </div>
                 </div>
