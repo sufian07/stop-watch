@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Imlementing a stop watch with angular.js",
   "main": "index.js",
+  "engines": {
+    "node": ">=0.12.10"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
