@@ -16,7 +16,7 @@ npm install
 I use gulp, saas, [ngStorage](https://github.com/gsklee/ngStorage) for the development.
 
 ## Preview
-You can see a video preview on [youtube](https://www.youtube.com/watch?v=AHz1dkNwZ2A&feature=youtu.be)
+You can see a video preview on [youtube](https://www.youtube.com/watch?v=nLl5g1CwfDM)
 
 ## Requirements
 * The application consists of: a counter, controls and records.
