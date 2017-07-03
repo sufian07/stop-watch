@@ -1,65 +1,67 @@
 $primary-color: #333333;
 @font-face {
     font-family: 'Digital7';
-    src: url('../fonts/digital-7.ttf'); /* IE9 Compat Modes */
-    src: 
-        local('Digital7'),
-        url('../fonts/digital-7.ttf') 
-        format('truetype');
+    src: url('../fonts/digital-7.ttf');
+    /* IE9 Compat Modes */
+    src: local('Digital7'), url('../fonts/digital-7.ttf') format('truetype');
 }
+
 body {
     background-color: $primary-color;
 }
-#content{
+
+#content {
     padding-top: 10px;
     width: 400px;
     margin: auto;
-
 }
-.well{
+
+.well {
     position: relative;
     text-align: center;
     color: #76C32E;
     font-size: 38px;
     border: 1px solid black;
     background-color: #242424;
-    margin-bottom:0;
+    margin-bottom: 0;
     border-bottom-left-radius: 0px;
     border-top-left-radius: 10px;
     border-bottom-right-radius: 0px;
     border-top-right-radius: 10px;
-    -webkit-box-shadow: inset 0px 0px 15px 7px rgba(0,0,0,0.35);
-    -moz-box-shadow: inset 0px 0px 15px 7px rgba(0,0,0,0.35);
-    box-shadow: inset 0px 0px 15px 7px rgba(0,0,0,0.35);
+    -webkit-box-shadow: inset 0px 0px 15px 7px rgba(0, 0, 0, 0.35);
+    -moz-box-shadow: inset 0px 0px 15px 7px rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0px 0px 15px 7px rgba(0, 0, 0, 0.35);
 }
-.time-white{
-    color:white;
-    border-bottom:1px solid #5E5E5E;
+
+.time-white {
+    color: white;
+    border-bottom: 1px solid #5E5E5E;
     float: left;
-    width:100%;
-    padding:  10px 0;
-    &:last-child{
+    width: 100%;
+    padding: 10px 0;
+    &:last-child {
         border-bottom: none;
     }
-    > div{
+    >div {
         padding: 0;
     }
     .clock-font {
         font-size: 20px;
         text-align: left;
         &.cloned {
-            opacity: 0.1;
+            opacity: 0.2;
+            top: 0;
         }
-        span{
+        span {
             min-width: 10px;
         }
     }
-    &:hover .remove{
+    &:hover .remove {
         display: block;
     }
-    .remove{
-        color:white;
-        background-color:red;
+    .remove {
+        color: white;
+        background-color: red;
         padding: 5px;
         border: none;
         font-size: 11px;
@@ -67,13 +69,16 @@ body {
         display: none;
     }
 }
+
 .clock {
     position: relative;
 }
-.clock-font{
+
+.clock-font {
     font-family: 'Digital7';
     &.cloned {
         position: absolute;
+        display: table;
         top: 0;
         left: 0;
         opacity: 0.3;
@@ -84,7 +89,36 @@ body {
         text-align: right;
         display: inline-block;
     }
-    .colon{
+    .colon {
         text-align: center;
+        &.blink {
+            text-decoration: blink;
+            animation-name: blinker;
+            animation-duration: 0.5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            animation-direction: alternate;
+        }
+    }
+}
+
+@keyframes blinker {
+    0% {
+        opacity: 0.0;
+    }
+    20% {
+        opacity: 0.0;
+    }
+    40% {
+        opacity: 0.0;
+    }
+    60% {
+        opacity: 1.0;
+    }
+    80% {
+        opacity: 1.0;
+    }
+    100% {
+        opacity: 1.0;
     }
 }

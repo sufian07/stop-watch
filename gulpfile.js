@@ -11,6 +11,7 @@ var imagemin = require('gulp-imagemin'); // Minify images
 var htmlmin = require('gulp-htmlmin');
 var inject = require('gulp-inject');
 var wiredep = require('wiredep').stream;
+var autoprefixer = require('gulp-autoprefixer');
 
 gulp.task('clean', function() {
     return del.sync('dist');
@@ -20,6 +21,7 @@ gulp.task('app-css', function() {
     return gulp.src('app/scss/**/*.scss') // Gets all files ending with .scss in app/scss and children dirs
         .pipe(sass())
         .pipe(concat('app.css'))
+        .pipe(autoprefixer())
         .pipe(minifycss())
         .pipe(gulp.dest('dist/css'))
 });
@@ -59,27 +61,16 @@ gulp.task('fonts', function() {
         ])
         .pipe(gulp.dest('./dist/fonts/'));
 });
+gulp.task('templates', function() {
+    return gulp.src('app/templates/*.html')
+        // .pipe(htmlmin({ collapseWhitespace: true }))
+        .pipe(gulp.dest('dist/templates/'))
+});
 
-
-gulp.task('html', ['app-css', 'app-js'], function() {
+gulp.task('html', ['app-css', 'app-js', 'templates'], function() {
     return gulp.src('app/index.html')
-        .pipe(htmlmin({ collapseWhitespace: true }))
+        // .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(gulp.dest('dist'))
-});
-
-gulp.task('images', function() {
-    gulp.src('./app/images/*')
-        .pipe(imagemin({
-            progressive: true,
-        }))
-        .pipe(gulp.dest('./dist/images'));
-});
-
-gulp.task('size', function() {
-    gulp.src('./app/**')
-        .pipe(size({
-            showFiles: true,
-        }));
 });
 
 gulp.task('vendor', ['fonts', 'vendors-css', 'vendors-js']);
